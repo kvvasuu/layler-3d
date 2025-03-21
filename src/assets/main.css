@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-chalk: #f6f5f2;
+  --color-beige: #f0ebe3;
+  --color-salmon: #ffb9c7;
+  --color-blush: #ffd9d9;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  width: 100vw;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  justify-content: center;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  @apply bg-chalk text-neutral-800;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
