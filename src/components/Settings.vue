@@ -3,13 +3,24 @@
     class="flex flex-col items-center w-1/5 h-full border-l-2 gap-4 border-blush bg-salmon py-2 px-1"
   >
     <p class="text-2xl font-semibold">Settings</p>
-    <p class="text-2xl font-semibold">{{ store.palletNumber }}</p>
-    <button
+    <div class="w-full flex gap-4 justify-center">
+      <p class="text-2xl font-semibold">Pallets:</p>
+      <p class="text-2xl font-semibold w-8">{{ store.palletNumber }}</p>
+      <input
+        type="range"
+        @change="changePalletQuantity"
+        value="1"
+        min="1"
+        max="100"
+        step="1"
+      />
+    </div>
+
+    <!--     <button
       class="text-2xl font-semibold bg-blush px-6 py-3 rounded-full cursor-pointer"
-      @click="addPallet"
     >
       Add pallet
-    </button>
+    </button> -->
   </div>
 </template>
 
@@ -18,9 +29,12 @@ import { useMainStore } from "@/stores/mainStore";
 
 const store = useMainStore();
 
-const addPallet = () => {
-  store.palletNumber++;
-  store.updatePalletQuantity();
-  console.log(store.pallets);
+const changePalletQuantity = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  if (target) {
+    store.palletNumber = Number(target.value);
+    store.updatePalletQuantity();
+    console.log(store.pallets);
+  }
 };
 </script>
