@@ -39,6 +39,25 @@ export const useMainStore = defineStore("mainStore", () => {
     );
   };
 
+  const changePalletWidth = (width: number) => {
+    palletWidth.value = width;
+    pallets.value.forEach((pallet) => (pallet.width = width));
+  };
+  const changePalletLength = (length: number) => {
+    palletLength.value = length;
+    pallets.value.forEach((pallet) => (pallet.length = length));
+  };
+  const changePalletHeight = (height: number) => {
+    palletHeight.value = height;
+    pallets.value.forEach((pallet) => (pallet.height = height));
+  };
+  const toggleWireframe = () => {
+    pallets.value.forEach((pallet) => pallet.toggleWireframe());
+  };
+  const toggleVisible = () => {
+    pallets.value.forEach((pallet) => pallet.toggleVisible());
+  };
+
   return {
     trailerLength,
     trailerWidth,
@@ -48,5 +67,10 @@ export const useMainStore = defineStore("mainStore", () => {
     palletNumber,
     pallets,
     updatePalletQuantity,
+    changePalletWidth,
+    changePalletLength,
+    changePalletHeight,
+    toggleWireframe,
+    toggleVisible,
   };
 });
