@@ -13,6 +13,7 @@ import {
   TextureLoader,
   RepeatWrapping,
 } from "three";
+import Stats from "three/examples/jsm/libs/stats.module.js";
 
 const colors = [
   "#fa5f5f",
@@ -38,6 +39,7 @@ export const useMainStore = defineStore("mainStore", () => {
 
   const scene = shallowRef<Scene | null>(null);
   const allPallets = shallowRef<Group>(new Group());
+  const stats = shallowRef<Stats>(new Stats());
 
   const setScene = (newScene: Scene) => {
     scene.value = newScene;
@@ -194,6 +196,7 @@ export const useMainStore = defineStore("mainStore", () => {
     pallets,
     scene,
     allPallets,
+    stats,
     updatePalletQuantity,
     toggleVisible,
     toggleWireframe,

@@ -24,11 +24,14 @@ import {
   PlaneGeometry,
   MathUtils,
   Color,
-  Group,
   Raycaster,
   Vector2,
   DirectionalLight,
   Clock,
+  TextureLoader,
+  RepeatWrapping,
+  Shape,
+  ExtrudeGeometry,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
@@ -53,17 +56,39 @@ new RGBELoader().load("/zwartkops_pit_1k.hdr", (texture) => {
 
 const grid = new GridHelper(30, 30);
 grid.position.z = 6.8;
-grid.position.y = -0.01;
+grid.position.y = -0.21;
 scene.add(grid);
 
+const woodNormalMap = new TextureLoader().load("/wood_normal.png");
+woodNormalMap.rotation = MathUtils.degToRad(90);
+woodNormalMap.wrapS = RepeatWrapping;
+woodNormalMap.wrapT = RepeatWrapping;
+
+const frame = new Shape();
+frame.moveTo(0, 0);
+frame.lineTo(mainStore.trailerLength, 0);
+frame.lineTo(mainStore.trailerLength, mainStore.trailerWidth);
+frame.lineTo(0, mainStore.trailerWidth);
+
+const extrudeSettings = {
+  steps: 1,
+  depth: 0.2,
+  bevelEnabled: false,
+};
+
 const floor = new Mesh(
-  new PlaneGeometry(mainStore.trailerWidth, mainStore.trailerLength),
-  new MeshStandardMaterial({ color: "#e3975b", roughness: 0.5 })
+  new ExtrudeGeometry(frame, extrudeSettings),
+  new MeshStandardMaterial({
+    color: "#e3975b",
+    roughness: 0.6,
+    normalMap: woodNormalMap,
+  })
 );
+
 floor.name = "floor";
 floor.rotation.x = MathUtils.degToRad(-90);
-floor.position.z = 6.8;
-floor.position.x = mainStore.trailerWidth / 2;
+floor.rotation.z = MathUtils.degToRad(-90);
+floor.position.y = -0.2;
 floor.receiveShadow = true;
 scene.add(floor);
 
@@ -107,6 +132,8 @@ function animate() {
   if (mainStore.scene) {
     renderer.render(mainStore.scene, camera);
   }
+
+  mainStore.stats.update();
 
   controls.update();
 }
