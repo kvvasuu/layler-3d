@@ -35,10 +35,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 const mainStore = useMainStore();
 
 const scene = new Scene();
-const allPallets = new Group();
 
 mainStore.setScene(scene);
-mainStore.setAllPallets(allPallets);
 
 let environmentTexture: DataTexture;
 
@@ -94,7 +92,7 @@ const raycaster = new Raycaster();
 
 const threeCanvas = useTemplateRef("threeCanvas");
 
-onMounted(() => {
+onMounted(async () => {
   if (threeCanvas.value) {
     const canvasParent = threeCanvas.value.parentElement;
     if (canvasParent) {
@@ -103,6 +101,8 @@ onMounted(() => {
       camera.aspect = canvasParent.clientWidth / canvasParent.clientHeight;
       camera.updateProjectionMatrix();
     }
+
+    await mainStore.loadModel();
 
     renderer = new WebGLRenderer({
       canvas: threeCanvas.value,
@@ -117,7 +117,7 @@ onMounted(() => {
     controls.target.copy(floor.position);
     controls.update();
 
-    mainStore.createPalletObjects();
+    await mainStore.createPalletObjects();
 
     window.addEventListener("resize", () => {
       if (canvasParent) {

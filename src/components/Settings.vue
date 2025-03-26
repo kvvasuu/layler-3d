@@ -8,7 +8,7 @@
       <p class="text-2xl font-semibold w-8">{{ store.palletNumber }}</p>
       <input
         type="range"
-        @change="changePalletQuantity"
+        @input="changePalletQuantity"
         value="1"
         min="1"
         max="100"

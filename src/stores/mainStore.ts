@@ -37,14 +37,10 @@ export const useMainStore = defineStore("mainStore", () => {
   const pallets = shallowRef<Pallet[]>([new Pallet()]);
 
   const scene = shallowRef<Scene | null>(null);
-  const allPallets = shallowRef<Group | null>(null);
+  const allPallets = shallowRef<Group>(new Group());
 
   const setScene = (newScene: Scene) => {
     scene.value = newScene;
-  };
-
-  const setAllPallets = (newGroup: Group) => {
-    allPallets.value = newGroup;
   };
 
   const updatePalletQuantity = () => {
@@ -96,6 +92,10 @@ export const useMainStore = defineStore("mainStore", () => {
 
   let palletModel: Mesh;
 
+  const loadModel = async () => {
+    palletModel = await loadModels();
+  };
+
   const cardBoardNormalMap = new TextureLoader().load("/cardboard-normal.png");
   cardBoardNormalMap.wrapS = RepeatWrapping;
   cardBoardNormalMap.wrapT = RepeatWrapping;
@@ -104,7 +104,6 @@ export const useMainStore = defineStore("mainStore", () => {
     if (allPallets.value) {
       allPallets.value.remove(...allPallets.value.children);
     }
-    palletModel = await loadModels();
 
     updatePalletQuantity();
 
@@ -202,7 +201,7 @@ export const useMainStore = defineStore("mainStore", () => {
     changePalletLength,
     changePalletWidth,
     setScene,
-    setAllPallets,
     createPalletObjects,
+    loadModel,
   };
 });
