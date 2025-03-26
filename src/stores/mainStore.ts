@@ -12,6 +12,7 @@ import {
   ExtrudeGeometry,
   TextureLoader,
   RepeatWrapping,
+  SRGBColorSpace,
 } from "three";
 import Stats from "three/examples/jsm/libs/stats.module.js";
 
@@ -36,6 +37,8 @@ export const useMainStore = defineStore("mainStore", () => {
   const palletLength = ref(1.2);
   const palletHeight = ref(0.6);
   const pallets = shallowRef<Pallet[]>([new Pallet()]);
+  const isVisible = ref(true);
+  const isWireframe = ref(false);
 
   const scene = shallowRef<Scene | null>(null);
   const allPallets = shallowRef<Group>(new Group());
@@ -86,9 +89,11 @@ export const useMainStore = defineStore("mainStore", () => {
     pallets.value.forEach((pallet) => (pallet.height = height));
   };
   const toggleWireframe = () => {
+    isWireframe.value = !isWireframe.value;
     pallets.value.forEach((pallet) => pallet.toggleWireframe());
   };
   const toggleVisible = () => {
+    isVisible.value = !isVisible.value;
     pallets.value.forEach((pallet) => pallet.toggleVisible());
   };
 
@@ -98,9 +103,25 @@ export const useMainStore = defineStore("mainStore", () => {
     palletModel = await loadModels();
   };
 
-  const cardBoardNormalMap = new TextureLoader().load("/cardboard-normal.png");
+  const cardBoardNormalMap = new TextureLoader().load(
+    "paper_0025_normal_opengl_1k.png"
+  );
   cardBoardNormalMap.wrapS = RepeatWrapping;
   cardBoardNormalMap.wrapT = RepeatWrapping;
+
+  const cardBoardTexture = new TextureLoader().load("/paper_0025_color_1k.jpg");
+  cardBoardTexture.wrapS = RepeatWrapping;
+  cardBoardTexture.wrapT = RepeatWrapping;
+  cardBoardTexture.colorSpace = SRGBColorSpace;
+
+  const woodNormalMap = new TextureLoader().load("/wood_normal.jpg");
+  woodNormalMap.wrapS = RepeatWrapping;
+  woodNormalMap.wrapT = RepeatWrapping;
+
+  const woodTexture = new TextureLoader().load("/wood.jpg");
+  woodTexture.wrapS = RepeatWrapping;
+  woodTexture.wrapT = RepeatWrapping;
+  woodTexture.colorSpace = SRGBColorSpace;
 
   const createPalletObjects = async () => {
     if (allPallets.value) {
@@ -120,7 +141,9 @@ export const useMainStore = defineStore("mainStore", () => {
           pallet.position.z
         );
         palletModel.material = new MeshStandardMaterial({
-          color: "#85560c",
+          color: "#ffce85",
+          map: woodTexture,
+          normalMap: woodNormalMap,
         });
         palletModel.castShadow = true;
         palletModel.receiveShadow = true;
@@ -137,9 +160,10 @@ export const useMainStore = defineStore("mainStore", () => {
           color: !isColorWhite
             ? (pallet.material as MeshStandardMaterial).color
             : colors[index % colors.length],
-          roughness: 0.8,
+          roughness: 0.7,
           normalMap: cardBoardNormalMap,
-          normalScale: new Vector2(2, 2),
+          map: cardBoardTexture,
+          wireframe: isWireframe.value,
         });
 
         const frame = new Shape();
@@ -174,6 +198,7 @@ export const useMainStore = defineStore("mainStore", () => {
         pallet.receiveShadow = !(pallet.material as MeshStandardMaterial)
           .wireframe;
         pallet.material = material;
+        pallet.visible = isVisible.value;
 
         const wholePallet = new Group();
         wholePallet.add(palletModel.clone());

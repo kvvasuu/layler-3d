@@ -6,7 +6,6 @@ export class Pallet extends Mesh {
   length: number;
   height: number;
   color: Color = new Color(1, 1, 1);
-  isVisible: boolean = true;
   hovered: boolean = false;
   clicked: boolean = false;
   defaultYPosition: number = 0.046;

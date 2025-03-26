@@ -18,10 +18,9 @@ import {
   GridHelper,
   PerspectiveCamera,
   WebGLRenderer,
-  PCFSoftShadowMap,
+  VSMShadowMap,
   Mesh,
   MeshStandardMaterial,
-  PlaneGeometry,
   MathUtils,
   Color,
   Raycaster,
@@ -31,6 +30,7 @@ import {
   TextureLoader,
   RepeatWrapping,
   Shape,
+  SRGBColorSpace,
   ExtrudeGeometry,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -59,10 +59,16 @@ grid.position.z = 6.8;
 grid.position.y = -0.21;
 scene.add(grid);
 
-const woodNormalMap = new TextureLoader().load("/wood_normal.png");
+const woodNormalMap = new TextureLoader().load("/wood_normal.jpg");
 woodNormalMap.rotation = MathUtils.degToRad(90);
 woodNormalMap.wrapS = RepeatWrapping;
 woodNormalMap.wrapT = RepeatWrapping;
+
+const woodTexture = new TextureLoader().load("/wood.jpg");
+woodTexture.rotation = MathUtils.degToRad(90);
+woodTexture.wrapS = RepeatWrapping;
+woodTexture.wrapT = RepeatWrapping;
+woodTexture.colorSpace = SRGBColorSpace;
 
 const frame = new Shape();
 frame.moveTo(0, 0);
@@ -79,9 +85,9 @@ const extrudeSettings = {
 const floor = new Mesh(
   new ExtrudeGeometry(frame, extrudeSettings),
   new MeshStandardMaterial({
-    color: "#e3975b",
     roughness: 0.6,
     normalMap: woodNormalMap,
+    map: woodTexture,
   })
 );
 
@@ -102,15 +108,22 @@ const camera = new PerspectiveCamera(
   1000
 );
 
-const directionalLight = new DirectionalLight(0xffffff, 4);
-directionalLight.position.z = -2;
-directionalLight.position.x = -2;
+const directionalLight = new DirectionalLight(0xffffff, 5);
+directionalLight.position.z = -1;
+directionalLight.position.x = -1;
+directionalLight.position.y = 1;
 
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 4096;
 directionalLight.shadow.mapSize.height = 4096;
-directionalLight.shadow.camera.near = 0.5;
-directionalLight.shadow.camera.far = 500;
+directionalLight.shadow.camera.near = 0.1;
+directionalLight.shadow.camera.far = 20;
+directionalLight.shadow.camera.left = -10;
+directionalLight.shadow.camera.right = 10;
+directionalLight.shadow.camera.top = 10;
+directionalLight.shadow.camera.bottom = -10;
+directionalLight.shadow.bias = 0.001;
+directionalLight.shadow.radius = 15;
 scene.add(directionalLight);
 
 const raycaster = new Raycaster();
@@ -138,6 +151,9 @@ function animate() {
   controls.update();
 }
 
+await mainStore.loadModel();
+await mainStore.createPalletObjects();
+
 onMounted(async () => {
   if (threeCanvas.value) {
     const canvasParent = threeCanvas.value.parentElement;
@@ -148,22 +164,19 @@ onMounted(async () => {
       camera.updateProjectionMatrix();
     }
 
-    await mainStore.loadModel();
-
     renderer = new WebGLRenderer({
       canvas: threeCanvas.value,
       antialias: true,
     });
     renderer.setSize(threeCanvas.value.width, threeCanvas.value.height);
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = PCFSoftShadowMap;
+    renderer.shadowMap.type = VSMShadowMap;
+    renderer.outputColorSpace = SRGBColorSpace;
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.target.copy(floor.position);
     controls.update();
-
-    await mainStore.createPalletObjects();
 
     window.addEventListener("resize", () => {
       if (canvasParent) {
