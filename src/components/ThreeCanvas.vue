@@ -92,6 +92,25 @@ const raycaster = new Raycaster();
 
 const threeCanvas = useTemplateRef("threeCanvas");
 
+const clock = new Clock();
+let delta = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  delta = clock.getDelta();
+
+  mainStore.pallets.forEach((p) => {
+    p.update(delta);
+  });
+
+  if (mainStore.scene) {
+    renderer.render(mainStore.scene, camera);
+  }
+
+  controls.update();
+}
+
 onMounted(async () => {
   if (threeCanvas.value) {
     const canvasParent = threeCanvas.value.parentElement;
@@ -243,25 +262,6 @@ onMounted(async () => {
 
     camera.position.set(-5, 5, 6.8);
     camera.lookAt(floor.position);
-
-    const clock = new Clock();
-    let delta = 0;
-
-    function animate() {
-      requestAnimationFrame(animate);
-
-      delta = clock.getDelta();
-
-      mainStore.pallets.forEach((p) => {
-        p.update(delta);
-      });
-
-      if (mainStore.scene) {
-        renderer.render(mainStore.scene, camera);
-      }
-
-      controls.update();
-    }
 
     animate();
   }
