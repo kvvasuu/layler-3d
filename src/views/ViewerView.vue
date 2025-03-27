@@ -1,10 +1,10 @@
 <template>
-  <main class="flex items-center justify-end w-full h-full">
+  <main class="flex items-center justify-end w-full h-full relative">
     <Suspense>
       <ThreeCanvas />
       <template #fallback>
         <div
-          class="w-4/5 h-full flex items-center justify-center bg-neutral-900"
+          class="w-full h-full flex items-center justify-center bg-neutral-900"
         >
           <p
             class="animate-pulse select-none text-neutral-200 font-semibold text-2xl"
@@ -21,5 +21,5 @@
 <script setup lang="ts">
 import Settings from "@/components/Settings.vue";
 import ThreeCanvas from "@/components/ThreeCanvas.vue";
-import { Suspense } from "vue";
+import { Suspense, ref } from "vue";
 </script>

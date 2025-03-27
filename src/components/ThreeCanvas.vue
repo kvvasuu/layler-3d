@@ -1,5 +1,5 @@
 <template>
-  <div class="w-4/5 h-full bg-neutral-900">
+  <div class="w-full h-full bg-neutral-900">
     <canvas ref="threeCanvas"></canvas>
   </div>
 </template>
@@ -156,6 +156,15 @@ await mainStore.loadModel();
 await mainStore.loadTextures();
 await mainStore.createPalletObjects();
 
+const resizeRenderer = () => {
+  const canvasParent = threeCanvas.value?.parentElement;
+  if (canvasParent && renderer) {
+    camera.aspect = canvasParent.clientWidth / canvasParent.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(canvasParent.clientWidth, canvasParent.clientHeight);
+  }
+};
+
 onMounted(async () => {
   if (threeCanvas.value) {
     const canvasParent = threeCanvas.value.parentElement;
@@ -181,11 +190,7 @@ onMounted(async () => {
     controls.update();
 
     window.addEventListener("resize", () => {
-      if (canvasParent) {
-        camera.aspect = canvasParent.clientWidth / canvasParent.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(canvasParent.clientWidth, canvasParent.clientHeight);
-      }
+      resizeRenderer();
     });
 
     canvasParent?.addEventListener("mousemove", (event: MouseEvent) => {
