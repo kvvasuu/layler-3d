@@ -7,7 +7,7 @@ import {
   Mesh,
   MeshStandardMaterial,
   Color,
-  Vector2,
+  Texture,
   Shape,
   ExtrudeGeometry,
   TextureLoader,
@@ -103,25 +103,35 @@ export const useMainStore = defineStore("mainStore", () => {
     palletModel = await loadModels();
   };
 
-  const cardBoardNormalMap = new TextureLoader().load(
-    "paper_0025_normal_opengl_1k.png"
-  );
-  cardBoardNormalMap.wrapS = RepeatWrapping;
-  cardBoardNormalMap.wrapT = RepeatWrapping;
+  const textureLoader = new TextureLoader();
+  let cardBoardNormalMap: Texture;
+  let cardBoardTexture: Texture;
+  let woodNormalMap: Texture;
+  let woodTexture: Texture;
 
-  const cardBoardTexture = new TextureLoader().load("/paper_0025_color_1k.jpg");
-  cardBoardTexture.wrapS = RepeatWrapping;
-  cardBoardTexture.wrapT = RepeatWrapping;
-  cardBoardTexture.colorSpace = SRGBColorSpace;
+  const loadTextures = async () => {
+    cardBoardNormalMap = await textureLoader.loadAsync(
+      "paper_0025_normal_opengl_1k.png"
+    );
+    cardBoardNormalMap.wrapS = RepeatWrapping;
+    cardBoardNormalMap.wrapT = RepeatWrapping;
 
-  const woodNormalMap = new TextureLoader().load("/wood_normal.jpg");
-  woodNormalMap.wrapS = RepeatWrapping;
-  woodNormalMap.wrapT = RepeatWrapping;
+    cardBoardTexture = await textureLoader.loadAsync(
+      "/paper_0025_color_1k.jpg"
+    );
+    cardBoardTexture.wrapS = RepeatWrapping;
+    cardBoardTexture.wrapT = RepeatWrapping;
+    cardBoardTexture.colorSpace = SRGBColorSpace;
 
-  const woodTexture = new TextureLoader().load("/wood.jpg");
-  woodTexture.wrapS = RepeatWrapping;
-  woodTexture.wrapT = RepeatWrapping;
-  woodTexture.colorSpace = SRGBColorSpace;
+    woodNormalMap = await textureLoader.loadAsync("/wood_normal.jpg");
+    woodNormalMap.wrapS = RepeatWrapping;
+    woodNormalMap.wrapT = RepeatWrapping;
+
+    woodTexture = await textureLoader.loadAsync("/wood.jpg");
+    woodTexture.wrapS = RepeatWrapping;
+    woodTexture.wrapT = RepeatWrapping;
+    woodTexture.colorSpace = SRGBColorSpace;
+  };
 
   const createPalletObjects = async () => {
     if (allPallets.value) {
@@ -231,5 +241,6 @@ export const useMainStore = defineStore("mainStore", () => {
     setScene,
     createPalletObjects,
     loadModel,
+    loadTextures,
   };
 });

@@ -106,3 +106,7 @@ function brightenColor(color: Color, factor: number, minOffset = 0.1): Color {
     Math.min((color.b + minOffset) * factor, 1)
   );
 }
+
+export function getImageUrl(name: string) {
+  return new URL(`./src/assets/img/${name}`, import.meta.url).href;
+}

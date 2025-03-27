@@ -59,12 +59,13 @@ grid.position.z = 6.8;
 grid.position.y = -0.21;
 scene.add(grid);
 
-const woodNormalMap = new TextureLoader().load("/wood_normal.jpg");
+const textureLoader = new TextureLoader();
+const woodNormalMap = await textureLoader.loadAsync("/wood_normal.jpg");
 woodNormalMap.rotation = MathUtils.degToRad(90);
 woodNormalMap.wrapS = RepeatWrapping;
 woodNormalMap.wrapT = RepeatWrapping;
 
-const woodTexture = new TextureLoader().load("/wood.jpg");
+const woodTexture = await textureLoader.loadAsync("/wood.jpg");
 woodTexture.rotation = MathUtils.degToRad(90);
 woodTexture.wrapS = RepeatWrapping;
 woodTexture.wrapT = RepeatWrapping;
@@ -152,6 +153,7 @@ function animate() {
 }
 
 await mainStore.loadModel();
+await mainStore.loadTextures();
 await mainStore.createPalletObjects();
 
 onMounted(async () => {
