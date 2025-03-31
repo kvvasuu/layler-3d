@@ -32,8 +32,11 @@ import {
   Shape,
   SRGBColorSpace,
   ExtrudeGeometry,
+  Vector3,
+  AxesHelper,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { ViewportGizmo } from "three-viewport-gizmo";
 
 const mainStore = useMainStore();
 
@@ -101,6 +104,7 @@ scene.add(floor);
 
 let renderer: WebGLRenderer;
 let controls: OrbitControls;
+let gizmo: ViewportGizmo;
 
 const camera = new PerspectiveCamera(
   75,
@@ -150,6 +154,7 @@ function animate() {
   mainStore.stats.update();
 
   controls.update();
+  gizmo.render();
 }
 
 await mainStore.loadModel();
@@ -189,8 +194,15 @@ onMounted(async () => {
     controls.target.copy(floor.position);
     controls.update();
 
+    gizmo = new ViewportGizmo(camera, renderer);
+    gizmo.set({ placement: "bottom-right" });
+
+    gizmo.attachControls(controls);
+    gizmo.update();
+
     window.addEventListener("resize", () => {
       resizeRenderer();
+      gizmo.update();
     });
 
     canvasParent?.addEventListener("mousemove", (event: MouseEvent) => {
@@ -307,8 +319,26 @@ onMounted(async () => {
       }
     });
 
-    camera.position.set(-5, 5, 6.8);
-    camera.lookAt(floor.position);
+    camera.position.set(-7, 5, 10);
+
+    const axesHelper = new AxesHelper(1);
+    axesHelper.setColors(
+      new Color("#ff0000"),
+      new Color("#00ff00"),
+      new Color("#0000ff")
+    );
+    axesHelper.position.set(
+      mainStore.trailerWidth / 2,
+      0.06,
+      mainStore.trailerLength / 2
+    );
+    scene.add(axesHelper);
+
+    controls.target.set(
+      mainStore.trailerWidth / 2,
+      floor.position.y,
+      mainStore.trailerLength / 2
+    );
 
     animate();
   }
