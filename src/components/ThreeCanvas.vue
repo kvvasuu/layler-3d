@@ -1,6 +1,13 @@
 <template>
   <div class="w-full h-full bg-neutral-900">
     <canvas ref="threeCanvas"></canvas>
+    <SettingsDialog
+      v-if="mainStore.isDialogShown"
+      :style="{
+        left: mainStore.dialogPosition.left + 'px',
+        top: mainStore.dialogPosition.top + 'px',
+      }"
+    ></SettingsDialog>
   </div>
 </template>
 
@@ -9,6 +16,7 @@ import { useTemplateRef, onMounted } from "vue";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { useMainStore } from "@/stores/mainStore";
 import type { Pallet } from "@/utils";
+import SettingsDialog from "./SettingsDialog.vue";
 
 import {
   Scene,
@@ -231,89 +239,65 @@ onMounted(async () => {
 
       const intersections = raycaster.intersectObjects(mainStore.pallets, true);
       if (intersections.length > 0) {
-        const selectedObject = intersections[0].object as Pallet;
-
+        mainStore.selectedPallet = intersections[0].object as Pallet;
         mainStore.pallets.forEach((p) => (p.clicked = false));
 
-        if (selectedObject instanceof Mesh) {
+        if (mainStore.selectedPallet instanceof Mesh) {
           if (
-            selectedObject.name.includes("pallet") &&
-            selectedObject.visible
+            mainStore.selectedPallet.name.includes("pallet") &&
+            mainStore.selectedPallet.visible
           ) {
-            const existingDialog = document.getElementById("custom-dialog");
-            if (existingDialog) {
-              existingDialog.remove();
-            }
+            mainStore.isDialogShown = false;
 
-            selectedObject.clicked = true;
-
-            const dialog = document.createElement("div");
-            dialog.id = "custom-dialog";
-            dialog.innerHTML = `
-            <p class="pallet-name"><strong>${selectedObject.name
-              .replace("_", " ")
-              .toUpperCase()}</strong></p>
-            <p><strong>Width: </strong>${
-              Math.round(selectedObject.width * 10) / 10
-            }</p>
-            <p><strong>Length: </strong>${
-              Math.round(selectedObject.length * 10) / 10
-            }</p>
-
-        `;
-            dialog.classList.add("pallet-dialog");
-            dialog.style.position = "absolute";
-            dialog.style.left = `${event.clientX}px`;
-            dialog.style.top = `${event.clientY}px`;
+            mainStore.selectedPallet.clicked = true;
 
             const widthSlider = document.createElement("input");
             widthSlider.type = "range";
             widthSlider.max = String(mainStore.trailerWidth);
             widthSlider.min = "0.4";
             widthSlider.step = "0.1";
-            widthSlider.value = String((selectedObject as Pallet).width);
+            widthSlider.value = String(
+              (mainStore.selectedPallet as Pallet).width
+            );
             widthSlider.addEventListener("input", () => {
-              (selectedObject as Pallet).width = Number(widthSlider.value);
+              (mainStore.selectedPallet as Pallet).width = Number(
+                widthSlider.value
+              );
               mainStore.createPalletObjects();
             });
-            dialog.appendChild(widthSlider);
 
             const lengthSlider = document.createElement("input");
             lengthSlider.type = "range";
             lengthSlider.max = String(mainStore.trailerWidth);
             lengthSlider.min = "0.4";
             lengthSlider.step = "0.1";
-            lengthSlider.value = String((selectedObject as Pallet).length);
+            lengthSlider.value = String(
+              (mainStore.selectedPallet as Pallet).length
+            );
             lengthSlider.addEventListener("input", () => {
-              (selectedObject as Pallet).length = Number(lengthSlider.value);
+              (mainStore.selectedPallet as Pallet).length = Number(
+                lengthSlider.value
+              );
               mainStore.createPalletObjects();
             });
-            dialog.appendChild(lengthSlider);
 
             const colorInput = document.createElement("input");
-            const color = "#" + selectedObject.color.getHexString();
+            const color = "#" + mainStore.selectedPallet.color.getHexString();
             colorInput.type = "color";
             colorInput.value = color;
 
             colorInput.addEventListener("input", () => {
-              (selectedObject.material as MeshStandardMaterial).color =
-                new Color(colorInput.value);
-              selectedObject.color = new Color(colorInput.value);
-            });
-            dialog.appendChild(colorInput);
-            document.body.appendChild(dialog);
-
-            const closeDialog = (e: MouseEvent) => {
-              if (!dialog.contains(e.target as Node)) {
-                dialog.remove();
-                selectedObject.clicked = false;
-                document.removeEventListener("click", closeDialog);
+              if (mainStore.selectedPallet) {
+                (
+                  mainStore.selectedPallet.material as MeshStandardMaterial
+                ).color = new Color(colorInput.value);
+                mainStore.selectedPallet.color = new Color(colorInput.value);
               }
-            };
+            });
 
-            setTimeout(() => {
-              document.addEventListener("click", closeDialog);
-            }, 100);
+            mainStore.dialogPosition.left = event.clientX;
+            mainStore.dialogPosition.top = event.clientY;
+            mainStore.isDialogShown = true;
           }
         }
       }
@@ -332,7 +316,7 @@ onMounted(async () => {
       0.06,
       mainStore.trailerLength / 2
     );
-    scene.add(axesHelper);
+    // scene.add(axesHelper);
 
     controls.target.set(
       mainStore.trailerWidth / 2,

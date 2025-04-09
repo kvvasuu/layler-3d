@@ -21,5 +21,4 @@
 <script setup lang="ts">
 import Settings from "@/components/Settings.vue";
 import ThreeCanvas from "@/components/ThreeCanvas.vue";
-import { Suspense, ref } from "vue";
 </script>
