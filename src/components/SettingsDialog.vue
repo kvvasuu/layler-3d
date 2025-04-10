@@ -1,15 +1,33 @@
 <template>
   <div
-    class="flex flex-col items-center justify-end w-64 h-40 absolute z-20 rounded-2xl border-2 gap-4 border-blush bg-salmon p-4"
+    class="flex flex-col items-center justify-end w-64 absolute z-20 rounded-2xl border-2 gap-4 border-blush bg-salmon p-4"
     ref="settingsDialog"
+    @mousedown.stop
+    v-if="mainStore.selectedPallet"
   >
-    <h2>
+    <h2 class="font-bold text-lg">
       {{ mainStore.selectedPallet?.name.replace("_", " ").toUpperCase() }}
     </h2>
-    <!-- <input type="range" v-model="mainStore.selectedPallet?.width" />
-    <input type="range" v-model="mainStore.selectedPallet?.height" /> -->
-    <p>{{ mainStore.selectedPallet?.width }}</p>
-    <p>{{ mainStore.selectedPallet?.length }}</p>
+    <div class="font-semibold">
+      <p>Width: {{ mainStore.selectedPallet?.width }}</p>
+      <input
+        type="range"
+        step="0.1"
+        min="0.4"
+        max="2.5"
+        :value="mainStore.selectedPallet.width"
+        @input="updateWidth"
+      />
+      <p>Length: {{ mainStore.selectedPallet?.length }}</p>
+      <input
+        type="range"
+        step="0.1"
+        min="0.4"
+        max="2.5"
+        :value="mainStore.selectedPallet.length"
+        @input="updateLength"
+      />
+    </div>
   </div>
 </template>
 
@@ -33,6 +51,24 @@ const closeDialog = (e: MouseEvent) => {
     mainStore.dialogPosition.top = 0;
     mainStore.isDialogShown = false;
     document.removeEventListener("click", closeDialog);
+  }
+};
+
+const updateWidth = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+
+  if (input && mainStore.selectedPallet) {
+    mainStore.selectedPallet.width = Number(input.value);
+    mainStore.createPalletObjects();
+  }
+};
+
+const updateLength = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+
+  if (input && mainStore.selectedPallet) {
+    mainStore.selectedPallet.length = Number(input.value);
+    mainStore.createPalletObjects();
   }
 };
 

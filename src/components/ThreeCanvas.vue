@@ -248,38 +248,7 @@ onMounted(async () => {
             mainStore.selectedPallet.visible
           ) {
             mainStore.isDialogShown = false;
-
             mainStore.selectedPallet.clicked = true;
-
-            const widthSlider = document.createElement("input");
-            widthSlider.type = "range";
-            widthSlider.max = String(mainStore.trailerWidth);
-            widthSlider.min = "0.4";
-            widthSlider.step = "0.1";
-            widthSlider.value = String(
-              (mainStore.selectedPallet as Pallet).width
-            );
-            widthSlider.addEventListener("input", () => {
-              (mainStore.selectedPallet as Pallet).width = Number(
-                widthSlider.value
-              );
-              mainStore.createPalletObjects();
-            });
-
-            const lengthSlider = document.createElement("input");
-            lengthSlider.type = "range";
-            lengthSlider.max = String(mainStore.trailerWidth);
-            lengthSlider.min = "0.4";
-            lengthSlider.step = "0.1";
-            lengthSlider.value = String(
-              (mainStore.selectedPallet as Pallet).length
-            );
-            lengthSlider.addEventListener("input", () => {
-              (mainStore.selectedPallet as Pallet).length = Number(
-                lengthSlider.value
-              );
-              mainStore.createPalletObjects();
-            });
 
             const colorInput = document.createElement("input");
             const color = "#" + mainStore.selectedPallet.color.getHexString();

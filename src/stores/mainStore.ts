@@ -1,4 +1,4 @@
-import { ref, shallowRef, reactive } from "vue";
+import { ref, shallowRef, reactive, shallowReactive } from "vue";
 import { defineStore } from "pinia";
 import { Pallet, arrangePallets, loadModels } from "@/utils";
 import {
@@ -44,7 +44,7 @@ export const useMainStore = defineStore("mainStore", () => {
   const allPallets = shallowRef<Group>(new Group());
   const stats = shallowRef<Stats>(new Stats());
 
-  const selectedPallet = shallowRef<Pallet>();
+  const selectedPallet = ref<Pallet>();
 
   const dialogPosition = reactive({ top: 0, left: 0 });
   const isDialogShown = ref(false);
