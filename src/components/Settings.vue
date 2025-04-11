@@ -102,6 +102,26 @@
             <span class="ms-3 text-sm font-medium text-gray-900">Stats</span>
           </label>
         </div>
+        <div class="w-full flex flex-col gap-4">
+          <p class="text-2xl font-semibold w-8">{{ mainStore.palletWidth }}</p>
+          <input
+            type="range"
+            @input="changePalletsWidth"
+            :value="mainStore.palletWidth"
+            min="0.4"
+            max="2.5"
+            step="0.1"
+          />
+          <p class="text-2xl font-semibold w-8">{{ mainStore.palletLength }}</p>
+          <input
+            type="range"
+            @input="changePalletsLength"
+            :value="mainStore.palletLength"
+            min="0.4"
+            max="2.5"
+            step="0.1"
+          />
+        </div>
       </div>
     </Transition>
   </div>
@@ -133,6 +153,30 @@ const changePalletQuantity = (e: Event) => {
   const target = e.target as HTMLInputElement;
   if (target) {
     mainStore.palletNumber = Number(target.value);
+    mainStore.updatePalletQuantity();
+    mainStore.createPalletObjects();
+  }
+};
+
+const changePalletsWidth = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  if (target) {
+    mainStore.palletWidth = Number(target.value);
+    mainStore.pallets.forEach(
+      (pallet) => (pallet.width = Number(target.value))
+    );
+    mainStore.updatePalletQuantity();
+    mainStore.createPalletObjects();
+  }
+};
+
+const changePalletsLength = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  if (target) {
+    mainStore.palletLength = Number(target.value);
+    mainStore.pallets.forEach(
+      (pallet) => (pallet.length = Number(target.value))
+    );
     mainStore.updatePalletQuantity();
     mainStore.createPalletObjects();
   }
