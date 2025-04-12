@@ -121,6 +121,15 @@
             max="2.5"
             step="0.1"
           />
+          <p class="text-2xl font-semibold w-8">{{ mainStore.palletHeight }}</p>
+          <input
+            type="range"
+            @input="changePalletsHeight"
+            :value="mainStore.palletHeight"
+            min="0.4"
+            max="4"
+            step="0.1"
+          />
         </div>
       </div>
     </Transition>
@@ -176,6 +185,18 @@ const changePalletsLength = (e: Event) => {
     mainStore.palletLength = Number(target.value);
     mainStore.pallets.forEach(
       (pallet) => (pallet.length = Number(target.value))
+    );
+    mainStore.updatePalletQuantity();
+    mainStore.createPalletObjects();
+  }
+};
+
+const changePalletsHeight = (e: Event) => {
+  const target = e.target as HTMLInputElement;
+  if (target) {
+    mainStore.palletHeight = Number(target.value);
+    mainStore.pallets.forEach(
+      (pallet) => (pallet.height = Number(target.value))
     );
     mainStore.updatePalletQuantity();
     mainStore.createPalletObjects();
