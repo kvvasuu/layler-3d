@@ -103,7 +103,9 @@
           </label>
         </div>
         <div class="w-full flex flex-col gap-4">
-          <p class="text-2xl font-semibold w-8">{{ mainStore.palletWidth }}</p>
+          <p class="text-2xl font-semibold w-8">
+            Width: {{ mainStore.palletWidth }}
+          </p>
           <input
             type="range"
             @input="changePalletsWidth"
@@ -112,7 +114,9 @@
             max="2.5"
             step="0.1"
           />
-          <p class="text-2xl font-semibold w-8">{{ mainStore.palletLength }}</p>
+          <p class="text-2xl font-semibold w-8">
+            Length: {{ mainStore.palletLength }}
+          </p>
           <input
             type="range"
             @input="changePalletsLength"
@@ -121,13 +125,15 @@
             max="2.5"
             step="0.1"
           />
-          <p class="text-2xl font-semibold w-8">{{ mainStore.palletHeight }}</p>
+          <p class="text-2xl font-semibold w-8">
+            Height: {{ mainStore.palletHeight }}
+          </p>
           <input
             type="range"
             @input="changePalletsHeight"
             :value="mainStore.palletHeight"
             min="0.4"
-            max="4"
+            max="3"
             step="0.1"
           />
         </div>
