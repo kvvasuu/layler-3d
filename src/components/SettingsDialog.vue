@@ -16,7 +16,7 @@
         min="0.4"
         max="2.5"
         :value="mainStore.selectedPallet.width"
-        @input="updateWidth"
+        @input="(event) => updateDimension(event, 'width')"
       />
       <p>Length: {{ mainStore.selectedPallet?.length }}</p>
       <input
@@ -25,7 +25,16 @@
         min="0.4"
         max="2.5"
         :value="mainStore.selectedPallet.length"
-        @input="updateLength"
+        @input="(event) => updateDimension(event, 'length')"
+      />
+      <p>Height: {{ mainStore.selectedPallet?.height }}</p>
+      <input
+        type="range"
+        step="0.1"
+        min="0.4"
+        max="2.5"
+        :value="mainStore.selectedPallet.height"
+        @input="(event) => updateDimension(event, 'height')"
       />
     </div>
   </div>
@@ -54,20 +63,23 @@ const closeDialog = (e: MouseEvent) => {
   }
 };
 
-const updateWidth = (event: Event) => {
+const updateDimension = (event: Event, type: "height" | "length" | "width") => {
   const input = event.target as HTMLInputElement;
 
   if (input && mainStore.selectedPallet) {
-    mainStore.selectedPallet.width = Number(input.value);
-    mainStore.createPalletObjects();
-  }
-};
+    const value = Number(input.value);
 
-const updateLength = (event: Event) => {
-  const input = event.target as HTMLInputElement;
-
-  if (input && mainStore.selectedPallet) {
-    mainStore.selectedPallet.length = Number(input.value);
+    switch (type) {
+      case "height":
+        mainStore.selectedPallet.height = value;
+        break;
+      case "width":
+        mainStore.selectedPallet.width = value;
+        break;
+      case "length":
+        mainStore.selectedPallet.length = value;
+        break;
+    }
     mainStore.createPalletObjects();
   }
 };
