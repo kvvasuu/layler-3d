@@ -103,7 +103,7 @@
           </label>
         </div>
         <div class="w-full flex flex-col gap-4">
-          <p class="text-2xl font-semibold w-8">
+          <p class="text-xl font-semibold">
             Width: {{ mainStore.palletWidth }}
           </p>
           <input
@@ -114,7 +114,7 @@
             max="2.5"
             step="0.1"
           />
-          <p class="text-2xl font-semibold w-8">
+          <p class="text-xl font-semibold">
             Length: {{ mainStore.palletLength }}
           </p>
           <input
@@ -125,7 +125,7 @@
             max="2.5"
             step="0.1"
           />
-          <p class="text-2xl font-semibold w-8">
+          <p class="text-xl font-semibold">
             Height: {{ mainStore.palletHeight }}
           </p>
           <input
